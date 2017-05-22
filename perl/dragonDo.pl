@@ -13,20 +13,21 @@ use Data::Dumper ;
 
 use Convenience ;
 
-use DragonBrain ;
+use DragonFractal ;
 
-my $someDragonBrain = DragonBrain->new () ;
+# my $someDragonFractal = PaperFractal->new () ;
+my $someDragonFractal = DragonFractal->new () ;
 
-$someDragonBrain->{ debugMode } = 1 ;
+$someDragonFractal->iterationUpTo(5) ;
 
-$someDragonBrain->nextIteration ;
-$someDragonBrain->nextIteration ;
-$someDragonBrain->nextIteration ;
+say "currentIteration = " . $someDragonFractal->currentIteration ;
 
-say "currentIteration = " . $someDragonBrain->currentIteration ;
+say $someDragonFractal->currentIteration ;
 
-say $someDragonBrain->currentIteration ;
+say "flatFoldList = " . join ( "", $someDragonFractal->flatFoldList ) ;
 
-say "foldLists = " . Dumper ( $someDragonBrain->{ foldLists } ) ;
+say "length = " . $someDragonFractal->lastFoldListLength;
 
-say "flatFoldList = " . join ( ", ", $someDragonBrain->flatFoldList ( 3 ) ) ;
+say "2^N = " . (2 ** $someDragonFractal->currentIteration);
+
+# say Dumper($someDragonFractal);
