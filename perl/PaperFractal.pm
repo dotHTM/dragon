@@ -10,12 +10,6 @@ use strict ;
 
 use parent 'PaperFoldedStrip' ;
 
-sub currentIteration() {
-    my $self        = shift ;
-    my $arrayLength = @{ $self->foldLists } ;
-    return $arrayLength ;
-}    ## currentIteration
-
 sub nextIteration() {
     my $self     = shift ;
     my @newFolds = ( 1 ) ;

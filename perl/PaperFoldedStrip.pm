@@ -27,6 +27,12 @@ sub foldLists {
     return $self->{ foldLists } ;
 }
 
+sub currentIteration() {
+    my $self        = shift ;
+    my $arrayLength = @{ $self->foldLists } ;
+    return $arrayLength ;
+}    ## currentIteration
+
 sub flatFoldList ($) {
     my $self                  = shift ;
     my ( $thruthruIteration ) = @_ ;
