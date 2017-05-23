@@ -8,6 +8,8 @@ As a simple introduction, take a strip of paper and fold it in half. Fold it in 
 
 If you opened all the folds, and made each one a right angle, what shape would you get after folding it X times?
 
+[Vi Hart's exploration](https://www.youtube.com/watch?v=EdyociU35u8)
+
 ### Turn lists
 
 The first thing I looked when I discovered this puzzle as a kid was to look at weather the paper turns left or right at a given crease.
