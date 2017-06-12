@@ -18,16 +18,30 @@ use DragonFractal ;
 # my $someDragonFractal = PaperFractal->new () ;
 my $someDragonFractal = DragonFractal->new () ;
 
-$someDragonFractal->iterationUpTo(5) ;
+my $maxiteration = 25;
 
-say "currentIteration = " . $someDragonFractal->currentIteration ;
+my $startTime = 0;
 
-say $someDragonFractal->currentIteration ;
+say "Calculating up to $maxiteration";
+$startTime = time();
+$someDragonFractal->iterationUpTo($maxiteration) ;
+say "Calculated in " . (time() - $startTime);
+say "----";
+say "currentIteration";
+$startTime = time();
+say "  " . $someDragonFractal->currentIteration ;
+say "Accessed in " . (time() - $startTime);
+say "----";
+# say "flatFoldList = " . join ( "", $someDragonFractal->flatFoldList ) ;
 
-say "flatFoldList = " . join ( "", $someDragonFractal->flatFoldList ) ;
-
-say "length = " . $someDragonFractal->lastFoldListLength;
-
-say "2^N = " . (2 ** $someDragonFractal->currentIteration);
+say "lastFoldListLength";
+$startTime = time();
+say "  " . $someDragonFractal->lastFoldListLength;
+say "Accessed in " . (time() - $startTime);
+say "----";
+say "2^N";
+$startTime = time();
+say "  " . (2 ** $someDragonFractal->currentIteration);
+say "Accessed in " . (time() - $startTime);
 
 # say Dumper($someDragonFractal);

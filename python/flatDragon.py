@@ -9,7 +9,7 @@ class PaperFractal:
         for someList in self.foldLists:
             for someItem in someList:
                 resultList.append(someItem)
-        return resultList   
+        return resultList
 
     def currentIteration(self):
         return len( self.foldLists )
@@ -35,28 +35,28 @@ class DragonFractal(PaperFractal):
 
 def main():
     maxIteration = 25
-    
+
     someFractal = DragonFractal()
 
     startTime = time.time()
     someFractal.iterationUpTo(maxIteration)
     elapsedTime = time.time() - startTime
     print("calculated up to " + str(maxIteration) + " in " + str(elapsedTime) )
-    
+
     print("----")
     print("currentIteration:")
     startTime = time.time()
     print(" "+str(someFractal.currentIteration()))
     elapsedTime = time.time() - startTime
     print("accessed in " + str(elapsedTime))
-    
+
     print("----")
     print("len(flatFolds):")
     startTime = time.time()
-    print(" "+str( len( someFractal.flatFolds() ) ))    
+    print(" "+str( len( someFractal.flatFolds() ) ))
     elapsedTime = time.time() - startTime
     print("accessed in " + str(elapsedTime))
-    
+
     print("----")
     print("2^iteration")
     startTime = time.time()
@@ -67,7 +67,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
 
-    
-        
+
+
