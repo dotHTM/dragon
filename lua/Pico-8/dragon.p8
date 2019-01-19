@@ -163,6 +163,11 @@ end
   return setmetatable({ orientation = class_orientation:new(direction, delta_angle) , point = point  }, class_turtle)
  end -- new
 
+ function class_turtle:relocate_to(vector_point)
+  self.point = vector_point
+ end -- move_to
+
+
  function class_turtle:move_to(vector_point, input_color)
   new_point = self.point + vector_point
   self:do_draw(new_point, input_color)
@@ -217,20 +222,31 @@ end
 -- class_turtle
 
 
+-- ------------------------------
+-- setup initial conditions
+-- ------------------------------
+
 dragon = class_dragon_fractal:new()
 dragon:iterate_up_to(12)
 
 dragon.length = #dragon:flat_folds()
 dragon.tape = dragon:flat_folds()
 
-
 initial_point = class_point:new(64, 64)
 initial_direction = 0
 turtle = class_turtle:new(initial_direction, 0.5 , initial_point)
 
+zoom_mode = "auto"
+
 local walk_distance = 10
 
 throttled_length = 200
+
+-- setup initial conditions
+-- ------------------------------
+
+
+
 
 function _update()
  current_fps = stat(7)
@@ -244,23 +260,52 @@ function _update()
  tape =  table_slice( dragon.tape, 1, throttled_length )
  
  turtle.orientation.delta_angle += .001
- turtle.point = initial_point
+ turtle:relocate_to(initial_point)
  turtle.drawn_count = 0
  
  turtle.orientation.direction = initial_direction
  if 1 < turtle.orientation.delta_angle then 
   turtle.orientation.delta_angle = 0
  end
- walk_distance = 64 * (.5  * cos(  turtle.orientation.delta_angle + .5  ) + .5)^5   + 128.0/throttled_length
+ 
+ if btn(❎) then
+  zoom_mode = "manual"
+  
+ elseif btn(🅾️) then 
+  zoom_mode = "auto"
+  
+ end
+
+
+ if zoom_mode == "auto" then
+   walk_distance = 64 * (.5  * cos(  turtle.orientation.delta_angle + .5  ) + .5)^5   + 128.0/throttled_length
+   message = "auto zoom, ❎ for manual"
+ elseif zoom_mode == "manual" then
+  
+  message = "manual zoom\n 🅾️ for auto, ⬆️⬇️ to zoom"
+  if btn(⬆️) then
+   walk_distance *= 1.1
+  elseif btn(⬇️) then 
+   walk_distance /= 1.1
+  end
+ end
+
+
+-- ⬆️⬇️⬅️➡️ ❎🅾️
+
 end
 
 function _draw()
  cls()
- print("fps  " .. current_fps, 1, 1, 7)
- print("len " .. throttled_length, 1, 8, 7)
+ print("fps  " .. current_fps, 1, 120 - 1 , 7)
+ print("len " .. throttled_length, 1, 120 - 8, 7)
 
  turtle:draw_fractal_tape(tape, walk_distance)
- print("drw " .. turtle.drawn_count, 1, 15, 7) 
+ print("drw " .. turtle.drawn_count, 1, 120 - 15, 7) 
+ 
+ if message then
+  print( message, 1, 1, 7)
+ end
  
 end
 
