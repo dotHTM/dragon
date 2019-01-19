@@ -165,9 +165,21 @@ end
 
  function class_turtle:move_to(vector_point, input_color)
   new_point = self.point + vector_point
-  line(self.point.x,self.point.y,new_point.x,new_point.y,input_color)
+  self:do_draw(new_point, input_color)
   self.point = new_point
  end -- move_to
+ 
+ function class_turtle:do_draw(new_point, input_color)
+    if 
+   ((0 <= self.point.x and self.point.x <= 128) and (0 <= self.point.y and self.point.y <= 128))
+   or
+   ((0 <= new_point.x and new_point.x <= 128) and (0 <= new_point.y and new_point.y <= 128))
+   then
+   line(self.point.x,self.point.y,new_point.x,new_point.y,input_color)
+   self.drawn_count += 1
+  end
+ end -- draw
+ 
  
  function class_turtle:forward(distance, input_color)
   vector_point = class_point:new(0,0)
@@ -209,12 +221,14 @@ dragon = class_dragon_fractal:new()
 dragon:iterate_up_to(12)
 
 dragon.length = #dragon:flat_folds()
+dragon.tape = dragon:flat_folds()
+
 
 initial_point = class_point:new(64, 64)
 initial_direction = 0
 turtle = class_turtle:new(initial_direction, 0.5 , initial_point)
 
-local walk_distance 
+local walk_distance = 10
 
 throttled_length = 200
 
@@ -222,17 +236,17 @@ function _update()
  current_fps = stat(7)
  if current_fps >= 30 then
   throttled_length += 1
- end
- 
- if current_fps < 30 then
+ else
   throttled_length -= 10
  end
  if throttled_length < 1 then throttled_length = 1 end
  
- tape =  table_slice( dragon:flat_folds(), 1, throttled_length )
+ tape =  table_slice( dragon.tape, 1, throttled_length )
  
  turtle.orientation.delta_angle += .001
  turtle.point = initial_point
+ turtle.drawn_count = 0
+ 
  turtle.orientation.direction = initial_direction
  if 1 < turtle.orientation.delta_angle then 
   turtle.orientation.delta_angle = 0
@@ -244,10 +258,10 @@ function _draw()
  cls()
  print("fps  " .. current_fps, 1, 1, 7)
  print("len " .. throttled_length, 1, 8, 7)
- 
 
- 
  turtle:draw_fractal_tape(tape, walk_distance)
+ print("drw " .. turtle.drawn_count, 1, 15, 7) 
+ 
 end
 
 
