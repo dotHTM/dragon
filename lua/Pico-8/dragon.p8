@@ -134,6 +134,27 @@ end
   result.y = self.y + var.y 
   return result
  end
+ 
+ function class_point:__mul(b)
+  result = class_point:new(0,0)
+  result.x = self.x * b
+  result.y = self.y * b
+  return result
+ end
+ 
+ function class_point:__div(b)
+  result = class_point:new(0,0)
+  result = self * (1/b)
+  return result
+ end
+ 
+ function class_point:__sub(var)
+  result = class_point:new(0,0)
+  result = self + (var * -1)
+  return result
+ end
+ 
+ 
 
 -- class_point
 
@@ -160,7 +181,7 @@ end
  class_turtle.__index = class_turtle
 
  function class_turtle:new( direction, delta_angle, point )
-  return setmetatable({ orientation = class_orientation:new(direction, delta_angle) , point = point  }, class_turtle)
+  return setmetatable({ orientation = class_orientation:new(direction, delta_angle) , point = point , draw_mode = 0 }, class_turtle)
  end -- new
 
  function class_turtle:relocate_to(vector_point)
@@ -174,16 +195,39 @@ end
   self.point = new_point
  end -- move_to
  
- function class_turtle:do_draw(new_point, input_color)
+ function class_turtle:do_draw(new_point, input_color, draw_mode)
     if 
    ((0 <= self.point.x and self.point.x <= 128) and (0 <= self.point.y and self.point.y <= 128))
    or
    ((0 <= new_point.x and new_point.x <= 128) and (0 <= new_point.y and new_point.y <= 128))
    then
-   line(self.point.x,self.point.y,new_point.x,new_point.y,input_color)
+
+   self:draw_action(new_point, input_color, draw_mode)
+   
    self.drawn_count += 1
   end
  end -- draw
+ 
+ function class_turtle:draw_action(new_point, input_color, draw_mode)
+ 
+   if self.draw_mode == 1 then
+    line(self.point.x,self.point.y,new_point.x,new_point.y,input_color)
+   elseif self.draw_mode == 2 then
+    circ(self.point.x,self.point.y,  (self.point - new_point):magnitude()/4  ,input_color)
+   elseif self.draw_mode == 3 then
+    circ(self.point.x,self.point.y,  (self.point - new_point):magnitude()/2  ,input_color)
+   else
+    circ(self.point.x,self.point.y, 0 ,input_color)
+   end
+   
+   self.max_draw_mode = 3
+ end -- draw_action
+ 
+ 
+ function class_turtle:next_draw_mode()
+  self.draw_mode+=1
+  self.draw_mode = self.draw_mode % ( self.max_draw_mode + 1 )
+ end
  
  
  function class_turtle:forward(distance, input_color)
@@ -201,11 +245,13 @@ end
   self.orientation:right()
  end -- right
 
- function class_turtle:draw_fractal_tape(tape, distance)
+ 
+
+ function class_turtle:draw_fractal_tape(tape, distance, color_max)
   
   index = 1
   
-  self:forward( distance , index % 15+1)
+  self:forward( distance , index % color_max +1)
   for some_turn in all(tape) do
    index += 1
    if some_turn == 1 then
@@ -213,7 +259,7 @@ end
    else
     self:right(1)
    end
-   self:forward( distance , index % 15+1 )
+   self:forward( distance , index % color_max +1 )
 
   end
  end -- draw_fractal_tape
@@ -227,7 +273,7 @@ end
 -- ------------------------------
 
 dragon = class_dragon_fractal:new()
-dragon:iterate_up_to(12)
+dragon:iterate_up_to(10)
 
 dragon.length = #dragon:flat_folds()
 dragon.tape = dragon:flat_folds()
@@ -238,9 +284,19 @@ turtle = class_turtle:new(initial_direction, 0.5 , initial_point)
 
 zoom_mode = "auto"
 
-local walk_distance = 10
+walk_distance = 3
 
 throttled_length = 200
+
+target_fps = 30
+target_cpu = 0.001
+
+rotation_enable = true
+cls_enable = true
+last_cls_enable = true
+
+turtle.draw_mode = 1
+alt_mode = false
 
 -- setup initial conditions
 -- ------------------------------
@@ -250,16 +306,16 @@ throttled_length = 200
 
 function _update()
  current_fps = stat(7)
- if current_fps >= 30 then
-  throttled_length += 1
- else
-  throttled_length -= 10
- end
+ cpu = stat(1)
+ mem = stat(0)
+ 
  if throttled_length < 1 then throttled_length = 1 end
  
  tape =  table_slice( dragon.tape, 1, throttled_length )
  
- turtle.orientation.delta_angle += .001
+ if rotation_enable then
+  turtle.orientation.delta_angle += .001
+ end
  turtle:relocate_to(initial_point)
  turtle.drawn_count = 0
  
@@ -268,43 +324,61 @@ function _update()
   turtle.orientation.delta_angle = 0
  end
  
- if btn(❎) then
-  zoom_mode = "manual"
-  
- elseif btn(🅾️) then 
-  zoom_mode = "auto"
-  
+
+if btnp(🅾️) then
+ alt_mode = not alt_mode
+ 
+end
+
+if alt_mode then
+ if btnp(⬆️) then
+  turtle:next_draw_mode()
  end
-
-
- if zoom_mode == "auto" then
-   walk_distance = 64 * (.5  * cos(  turtle.orientation.delta_angle + .5  ) + .5)^5   + 128.0/throttled_length
-   message = "auto zoom, ❎ for manual"
- elseif zoom_mode == "manual" then
-  
-  message = "manual zoom\n 🅾️ for auto, ⬆️⬇️ to zoom"
-  if btn(⬆️) then
-   walk_distance *= 1.1
-  elseif btn(⬇️) then 
-   walk_distance /= 1.1
-  end
+ if btnp(⬇️) then
  end
+ if btn(⬅️) then
+  turtle.orientation.delta_angle += .01
+ end
+ if btn(➡️) then
+  turtle.orientation.delta_angle -= .01
+ end
+ if btnp(❎) then
+  cls_enable = not cls_enable
+ end
+else
+ if btn(⬆️) then
+  walk_distance *= 1.1
+ end
+ if btn(⬇️) then
+  walk_distance /= 1.1
+ end
+ if btnp(⬅️) then
+  turtle.orientation.delta_angle += .001
+ end
+ if btnp(➡️) then
+  turtle.orientation.delta_angle -= .001
+ end
+ if btnp(❎) then
+  rotation_enable = not rotation_enable
+ end
+end
 
 
--- ⬆️⬇️⬅️➡️ ❎🅾️
 
 end
 
 function _draw()
- cls()
- print("fps  " .. current_fps, 1, 120 - 1 , 7)
- print("len " .. throttled_length, 1, 120 - 8, 7)
-
- turtle:draw_fractal_tape(tape, walk_distance)
- print("drw " .. turtle.drawn_count, 1, 120 - 15, 7) 
  
- if message then
-  print( message, 1, 1, 7)
+ if cls_enable then 
+  cls()
+ end
+ 
+ turtle:draw_fractal_tape(tape, walk_distance, 12)
+ 
+ if alt_mode then
+  rectfill(0,0,128,0,5)
+ else
+  rectfill(0,0,128,0,0)
  end
  
 end
