@@ -11,8 +11,8 @@ use warnings ;
 
 use Data::Dumper ;
 
+use lib './';
 use Convenience ;
-
 use DragonFractal ;
 
 # my $someDragonFractal = PaperFractal->new () ;
