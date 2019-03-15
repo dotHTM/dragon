@@ -12,14 +12,6 @@ has 'private_fold_lists' => (
     default => sub { [] },
 );
 
-# sub fold_lists {
-#     my ( $self, $new_value ) = @_;
-#     if ($new_value) {
-#         $self->{private_fold_lists} = $new_value;
-#     }
-#     return $self->{private_fold_lists};
-# }    ##  fold_lists
-
 sub append_fold_lists {
     my ( $self, $new_value ) = @_;
     push @{ $self->fold_lists() }, $new_value;
