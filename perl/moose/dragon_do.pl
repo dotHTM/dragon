@@ -9,7 +9,6 @@ use warnings;
 
 use Carp qw{croak};
 use Data::Dumper::Concise;
-$Data::Dumper::Sortkeys = 1;
 
 use lib "./";
 use DragonFractal;

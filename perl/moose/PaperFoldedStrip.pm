@@ -18,13 +18,13 @@ sub append_fold_lists {
     return $self->fold_lists();
 }    ##  fold_lists
 
-sub current_iteration() {
+sub current_iteration {
     my ($self) = @_;
 
     return scalar @{ $self->fold_lists() };
 }    ## current_iteration
 
-sub flat_fold_list ($) {
+sub flat_fold_list {
     my ( $self, $thruthru_iteration ) = @_;
     my @result = ();
 
@@ -48,3 +48,4 @@ sub last_fold_list_length {
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
+
