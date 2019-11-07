@@ -1,11 +1,10 @@
 pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
+--dragon fractal
+-- by mike cramer
 
 cls()
-
--- dragon.p8
--- by mike cramer
 
 
 -- =================
