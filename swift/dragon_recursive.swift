@@ -1,49 +1,56 @@
 #!/usr/bin/swift
 
+
 import Foundation
 // import UIKit
 
-func dragonFractal(iteration : Int) -> [Bool]{
-  if( iteration <= 0 ){
-    return []
+struct PaperFractal {
+  let foldlist : [[Bool]]
+  var iteration : Int{ get{ foldlist.count } }
+  var flatFoldList : [Bool] { get {foldlist.reduce([], +)} }
+}
+
+let emptyPaperFractal  = PaperFractal(foldlist: [])
+typealias PaperFractalStep = (PaperFractal)->PaperFractal
+func dragonStep(_ pastState: PaperFractal)->PaperFractal{
+  return  PaperFractal(foldlist : ( [pastState.flatFoldList + [true] + pastState.flatFoldList.reversed().map{!$0}] ))
+}
+
+func iterateUpTo(previousState: PaperFractal, fractalStep: PaperFractalStep,  iteration requestedIteraton: Int)->PaperFractal{
+  return  requestedIteraton <= previousState.iteration
+    ? previousState
+    : fractalStep(
+        iterateUpTo(
+          previousState: previousState,
+          fractalStep: fractalStep,
+          iteration: requestedIteraton - 1)
+        )
+}
+
+func turnNumber(previousState: PaperFractal, fractalStep: PaperFractalStep, requestedTurnNumber : Int)->Bool{
+  if requestedTurnNumber <= previousState.flatFoldList.count {
+    return previousState.flatFoldList[requestedTurnNumber - 1]
   }
-  let lastIter = dragonFractal(iteration: iteration-1)
-  let reversedLastIter = lastIter.reversed().map{!$0}
-  
-  return lastIter + [true] + reversedLastIter
-} // dragonFractal
-
-func turnNumber(_ paperFractal : (Int)->[Bool] , number: Int)->Bool{
-    return turnNumber( paperFractal : paperFractal , number: number, iter: 0)
-} // turnNumber
-
-func turnNumber( paperFractal : (Int)->[Bool] , number: Int, iter: Int)->Bool{
-    let pf = paperFractal( iter)
-  if pf.count > number {
-    return pf[number]
-  }
-  return turnNumber( paperFractal : paperFractal , number: number, iter: iter+1)
-} // turnNumber
-
-
+  return turnNumber(previousState: fractalStep(previousState), fractalStep: fractalStep, requestedTurnNumber : requestedTurnNumber - 1)
+}
 
 let maxIteration = 25
 print("calculating fractal up to", maxIteration)
 let maxIteration_startTime = Date().timeIntervalSince1970
-let df = dragonFractal(iteration: maxIteration)
+let df = iterateUpTo(previousState: emptyPaperFractal, fractalStep: dragonStep, iteration: maxIteration )
 // print(df)
 print("Calculated in " + String(Date().timeIntervalSince1970 - maxIteration_startTime ))
 
 print("----")
 print("length of flatfoldlist")
 let flatfoldlist_startTime = Date().timeIntervalSince1970
-print( " ", df.count)
+let lastTurnNumber = df.flatFoldList.count
+print( " ", lastTurnNumber)
 print("Accessed in " + String(Date().timeIntervalSince1970 - flatfoldlist_startTime ))
 
-let turnNumber = 33554431
 print("----")
-print("turn number \(turnNumber)")
+print("turn number \(lastTurnNumber)")
 let turnNumber_startTime = Date().timeIntervalSince1970
-print("   is \(turnNumber(dragonFractal, number: turnNumber ))")
+print("   is \( turnNumber(previousState: df, fractalStep: dragonStep, requestedTurnNumber : lastTurnNumber))")
 print("Accessed in " + String(Date().timeIntervalSince1970 - turnNumber_startTime ))
 
