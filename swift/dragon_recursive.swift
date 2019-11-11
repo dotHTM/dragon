@@ -8,15 +8,15 @@ func dragonFractal(iteration : Int) -> [Bool]{
     return []
   }
   let lastIter = dragonFractal(iteration: iteration-1)
-  var result = lastIter
-  result.append(true)
-  lastIter.reversed().forEach{result.append(!$0)}
-  return result
+  let reversedLastIter = lastIter.reversed().map{!$0}
+  
+  return lastIter + [true] + reversedLastIter
 } // dragonFractal
 
 func turnNumber(_ paperFractal : (Int)->[Bool] , number: Int)->Bool{
     return turnNumber( paperFractal : paperFractal , number: number, iter: 0)
 } // turnNumber
+
 func turnNumber( paperFractal : (Int)->[Bool] , number: Int, iter: Int)->Bool{
     let pf = paperFractal( iter)
   if pf.count > number {
@@ -26,35 +26,24 @@ func turnNumber( paperFractal : (Int)->[Bool] , number: Int, iter: Int)->Bool{
 } // turnNumber
 
 
-func dragonFractalTN(_ number: Int, iter: Int)->Bool{
-let df = dragonFractal(iteration: iter)
-  if df.count > number {
-    return df[number]
-  }
-  return dragonFractalTN(number, iter: iter+1 )
-} // dragonFractalTN
-
-var startTime : Double
-
-
 
 let maxIteration = 25
 print("calculating fractal up to", maxIteration)
-startTime = Date().timeIntervalSince1970
+let maxIteration_startTime = Date().timeIntervalSince1970
 let df = dragonFractal(iteration: maxIteration)
 // print(df)
-print("Calculated in " + String(Date().timeIntervalSince1970 - startTime ))
+print("Calculated in " + String(Date().timeIntervalSince1970 - maxIteration_startTime ))
 
 print("----")
 print("length of flatfoldlist")
-startTime = Date().timeIntervalSince1970
+let flatfoldlist_startTime = Date().timeIntervalSince1970
 print( " ", df.count)
-print("Accessed in " + String(Date().timeIntervalSince1970 - startTime ))
+print("Accessed in " + String(Date().timeIntervalSince1970 - flatfoldlist_startTime ))
 
-let turnNumber = 33554430
+let turnNumber = 33554431
 print("----")
 print("turn number \(turnNumber)")
-startTime = Date().timeIntervalSince1970
+let turnNumber_startTime = Date().timeIntervalSince1970
 print("   is \(turnNumber(dragonFractal, number: turnNumber ))")
-print("Accessed in " + String(Date().timeIntervalSince1970 - startTime ))
+print("Accessed in " + String(Date().timeIntervalSince1970 - turnNumber_startTime ))
 
