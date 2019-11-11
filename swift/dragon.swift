@@ -60,7 +60,7 @@ let someDragon = DragonFractal()
 
 var startTime : Double
 
-let maxIteration = 25
+let maxIteration = 32
 print("calculating fractal up to", maxIteration)
 startTime = Date().timeIntervalSince1970
 someDragon.iterationUpTo(someIteration: maxIteration)

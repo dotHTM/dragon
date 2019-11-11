@@ -6,8 +6,8 @@ import Foundation
 
 struct PaperFractal {
   let foldlist : [[Bool]]
-  var iteration : Int{ get{ foldlist.count } }
-  var flatFoldList : [Bool] { get {foldlist.reduce([], +)} }
+  var iteration : Int{ foldlist.count }
+  var flatFoldList : [Bool] { foldlist.reduce([], +) }
 }
 
 let emptyPaperFractal  = PaperFractal(foldlist: [])
@@ -34,7 +34,7 @@ func turnNumber(previousState: PaperFractal, fractalStep: PaperFractalStep, requ
   return turnNumber(previousState: fractalStep(previousState), fractalStep: fractalStep, requestedTurnNumber : requestedTurnNumber - 1)
 }
 
-let maxIteration = 25
+let maxIteration = 32
 print("calculating fractal up to", maxIteration)
 let maxIteration_startTime = Date().timeIntervalSince1970
 let df = iterateUpTo(previousState: emptyPaperFractal, fractalStep: dragonStep, iteration: maxIteration )
