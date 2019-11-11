@@ -38,7 +38,7 @@ let maxIteration = 25
 print("calculating fractal up to", maxIteration)
 let maxIteration_startTime = Date().timeIntervalSince1970
 let df = iterateUpTo(previousState: emptyPaperFractal, fractalStep: dragonStep, iteration: maxIteration )
-// print(df)
+// print(df.flatFoldList)
 print("Calculated in " + String(Date().timeIntervalSince1970 - maxIteration_startTime ))
 
 print("----")
