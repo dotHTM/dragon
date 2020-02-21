@@ -1,5 +1,7 @@
 # README
 
+> Future updates to be made in https://github.com/dotHTM/code_reference
+
 The Dragon Fractal is a little project that I like to reimplement in new languages to try out syntax and features of languages.
 
 ## Dragon Fractal
